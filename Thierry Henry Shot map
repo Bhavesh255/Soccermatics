@@ -1,0 +1,43 @@
+import matplotlib.pyplot as plt
+import numpy as np
+from mplsoccer import Pitch, Sbopen, VerticalPitch
+parser = Sbopen()
+df, related, freeze, tactics = parser.event(69250)
+#get team names
+team1, team2 = df.team_name.unique()
+#A dataframe of shots
+# shoot = df.loc[df['type_name'] == 'shot'].set_index('id')
+shoot = df.loc[df['type_name'] == 'Shot'].set_index('id')
+#plot pitch
+pitch = Pitch(line_color = "black")
+fig, ax = pitch.draw(figsize=(10, 7))
+#Size of the pitch in yards (!!!)
+pitchLengthX = 120
+pitchWidthY = 80
+#Plot the shots by looping through them.
+for i,shot in shoot.iterrows():
+    #get the information
+    x=shot['x']
+    y=shot['y']
+    goal=shot['outcome_name']=='Goal'
+    player_name=shot['player_name']
+    #set circlesize
+    circleSize=1
+    #plot Shots
+    if (player_name=="Thierry Henry"):
+        if goal:
+            ShotCircle=plt.Circle((x,y),circleSize,color="red")
+            ax.add_patch(ShotCircle)
+        else:
+            ShotCircle=plt.Circle((x,y),circleSize,color="blue")
+            ax.add_patch(ShotCircle)
+        
+    #plot Sweden
+    # # else:
+    #     # if headedpass:
+    #         PassCircle=plt.Circle((pitchLengthX-x,pitchWidthY - y),circleSize,color="blue")
+    #         ax.add_patch(PassCircle)
+#set title
+fig.suptitle("Thierry Henry Shots", fontsize = 24)
+fig.set_size_inches(10, 7)
+plt.show()
